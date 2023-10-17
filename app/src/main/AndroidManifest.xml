@@ -7,12 +7,14 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/title"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,12 +24,15 @@
         </activity>
         <activity
             android:name=".SearchActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".MediaLibraryActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
