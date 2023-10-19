@@ -51,6 +51,17 @@ class SettingsActivity : AppCompatActivity() {
 //            editor.apply()
 //        }
 
+        val shareAppButton = findViewById<View>(R.id.share_app)
+        shareAppButton.setOnClickListener {
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.practicum_android_developer))
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+
         val writeSupportButton = findViewById<View>(R.id.write_support)
         writeSupportButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))

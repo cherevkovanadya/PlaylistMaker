@@ -12,4 +12,5 @@
     <string name="email_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="email">cherevkovanadezhda@yandex.ru</string>
     <string name="yandex_terms_of_use">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="practicum_android_developer">https://practicum.yandex.ru/android-developer/</string>
 </resources>
