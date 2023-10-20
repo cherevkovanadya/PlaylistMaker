@@ -11,45 +11,39 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 
 
 class SearchActivity : AppCompatActivity() {
-
-    private var searchText: String = TEXT_DEF
-    private lateinit var inputEditText: EditText
-
-    companion object {
-        const val TEXT_DEF = ""
+    private var searchText: String = ""
+    private lateinit var binding: ActivitySearchBinding
+    private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
-        Log.e("text1",searchText)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        inputEditText = findViewById<EditText>(R.id.input_edit_text)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCH_TEXT, TEXT_DEF)
-            Log.e("text2",searchText)
-            inputEditText.setText(searchText)
+            searchText = savedInstanceState.getString(SEARCH_TEXT, "")
+            binding.inputEditText.setText(searchText)
         }
 
-        val returnButton = findViewById<ImageView>(R.id.return_back)
-        returnButton.setOnClickListener {
-            val returnIntent = Intent(this, MainActivity::class.java)
-            startActivity(returnIntent)
+        binding.returnBack.setOnClickListener {
+            finish()
         }
 
-        val clearButton = findViewById<ImageView>(R.id.clear_icon)
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
+        binding.clearIcon.setOnClickListener {
+            binding.inputEditText.setText("")
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0)
+            inputMethodManager.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -57,14 +51,14 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
+                binding.clearIcon.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
             }
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
     }
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {

@@ -12,10 +12,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_medium"
         android:text="@string/title"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="@dimen/header_text"
-        android:fontFamily="@font/ys_display_medium"/>
+        android:textSize="@dimen/header_text" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,19 +24,31 @@
         android:orientation="vertical"
         android:paddingTop="40dp">
 
-        <Button style="@style/MainButtonStyle"
+        <Button
             android:id="@+id/search"
+            style="@style/MainButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:text="@string/search"
-            app:icon="@drawable/search"/>
+            app:icon="@drawable/search" />
 
-        <Button style="@style/MainButtonStyle"
+        <Button
             android:id="@+id/media_library"
+            style="@style/MainButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:text="@string/media_library"
-            app:icon="@drawable/media_library"/>
+            app:icon="@drawable/media_library" />
 
-        <Button style="@style/MainButtonStyle"
+        <Button
             android:id="@+id/settings"
+            style="@style/MainButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:text="@string/settings"
-            app:icon="@drawable/settings"/>
+            app:icon="@drawable/settings" />
     </LinearLayout>
 </LinearLayout>

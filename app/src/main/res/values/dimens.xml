@@ -8,10 +8,10 @@
     <dimen name="header_text">22sp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
-    <dimen name="margin_top">42dp</dimen>
-    <dimen name="margin_between_text">21dp</dimen>
+    <dimen name="margin_top">40dp</dimen>
+    <dimen name="padding_between_text">20dp</dimen>
     <dimen name="medium_margin_text">16dp</dimen>
-    <dimen name="medium_margin_vertical">10dp</dimen>
+    <dimen name="medium_margin_vertical">12dp</dimen>
     <dimen name="margin_vertical">8dp</dimen>
     <dimen name="margin_text">12dp</dimen>
     <dimen name="medium_text">16sp</dimen>

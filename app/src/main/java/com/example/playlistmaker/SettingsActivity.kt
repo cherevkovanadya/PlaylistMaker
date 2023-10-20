@@ -17,53 +17,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.SwitchCompat
+import com.example.playlistmaker.databinding.ActivityMainBinding
+import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val returnButton = findViewById<ImageView>(R.id.return_back)
-        returnButton.setOnClickListener {
-            val returnIntent = Intent(this, MainActivity::class.java)
-            startActivity(returnIntent)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.returnBack.setOnClickListener {
+            finish()
         }
 
-        val switchThemeButton = findViewById<SwitchCompat>(R.id.switch_theme)
-//        val sharedPreferences = getSharedPreferences("MODE", MODE_PRIVATE)
-//        val editor = sharedPreferences.edit()
-//        val nightTheme = sharedPreferences.getBoolean("night",false)
-//
-//        if(nightTheme){
-//            switchThemeButton.isChecked = true
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//        }
-//
-//        switchThemeButton.setOnCheckedChangeListener { _, isChecked ->
-//            if(!isChecked){
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//                editor.putBoolean("night",false)
-//            }
-//            else {
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//                editor.putBoolean("night",true)
-//            }
-//            editor.apply()
-//        }
-
-        val shareAppButton = findViewById<View>(R.id.share_app)
-        shareAppButton.setOnClickListener {
-            val sendIntent = Intent().apply {
+        binding.shareApp.setOnClickListener {
+            Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.practicum_android_developer))
                 type = "text/plain"
+                startActivity(Intent.createChooser(this, null))
             }
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
         }
 
-        val writeSupportButton = findViewById<View>(R.id.write_support)
-        writeSupportButton.setOnClickListener {
+        binding.writeSupport.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
             shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject))
@@ -71,8 +51,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val termsOfUseButton = findViewById<View>(R.id.terms_of_use)
-        termsOfUseButton.setOnClickListener {
+        binding.termsOfUse.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yandex_terms_of_use)))
             startActivity(shareIntent)
         }
