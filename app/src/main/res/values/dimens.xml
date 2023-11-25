@@ -2,17 +2,23 @@
 <resources>
     <dimen name="regular_icon_padding">8dp</dimen>
     <dimen name="medium_icon_padding">12dp</dimen>
+    <dimen name="padding_horizontal">12dp</dimen>
     <dimen name="padding">4dp</dimen>
     <dimen name="padding_top">14dp</dimen>
     <dimen name="padding_bottom">28dp</dimen>
-    <dimen name="header_text">22sp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="margin_top">40dp</dimen>
     <dimen name="padding_between_text">20dp</dimen>
+    <dimen name="light_margin">8dp</dimen>
     <dimen name="medium_margin_text">16dp</dimen>
+    <dimen name="margin_vertical">14dp</dimen>
+    <dimen name="light_margin_vertical">8dp</dimen>
     <dimen name="medium_margin_vertical">12dp</dimen>
-    <dimen name="margin_vertical">8dp</dimen>
+    <dimen name="hard_margin_vertical">18dp</dimen>
     <dimen name="margin_text">12dp</dimen>
+    <dimen name="light_text">12sp</dimen>
     <dimen name="medium_text">16sp</dimen>
+    <dimen name="header_text">22sp</dimen>
+    <dimen name="image_size">44dp</dimen>
 </resources>

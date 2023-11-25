@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import SearchAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +12,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.MockPlaylist.mockPlaylist
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 
 
@@ -30,6 +33,9 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val searchAdapter = SearchAdapter(mockPlaylist)
+        binding.tracksRecyclerView.adapter = searchAdapter
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT, "")

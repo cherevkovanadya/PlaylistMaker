@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimaryVariant"
     android:orientation="vertical">
 
@@ -35,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/medium_padding"
-        android:layout_marginVertical="@dimen/margin_vertical"
+        android:layout_marginVertical="@dimen/light_margin_vertical"
         android:background="@drawable/search_background">
 
         <ImageView
@@ -74,4 +75,12 @@
             app:tint="?attr/colorOnPrimaryContainer" />
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tracks_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/medium_padding"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/track_view"/>
 </LinearLayout>
