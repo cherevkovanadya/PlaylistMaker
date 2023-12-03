@@ -11,19 +11,19 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 
 class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val trackName = itemView.findViewById<TextView>(R.id.track_name)
-    private val artistName = itemView.findViewById<TextView>(R.id.artist_name)
-    private val trackTime = itemView.findViewById<TextView>(R.id.track_time)
-    private val trackCover = itemView.findViewById<ImageView>(R.id.track_cover_search)
+    private val trackNameTextView = itemView.findViewById<TextView>(R.id.trackNameTextView)
+    private val artistNameTextView = itemView.findViewById<TextView>(R.id.artistNameTextView)
+    private val trackTimeTextView = itemView.findViewById<TextView>(R.id.trackTimeTextView)
+    private val trackCoverImageView = itemView.findViewById<ImageView>(R.id.trackCoverImageView)
 
     fun bind(track: Track) {
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        trackNameTextView.text = track.trackName
+        artistNameTextView.text = track.artistName
+        trackTimeTextView.text = track.trackTime
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
             .transform(RoundedCorners(2))
             .placeholder(R.drawable.placeholder)
-            .into(trackCover)
+            .into(trackCoverImageView)
     }
 }

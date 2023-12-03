@@ -22,6 +22,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val EMPTY = ""
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -38,15 +39,15 @@ class SearchActivity : AppCompatActivity() {
         binding.tracksRecyclerView.adapter = searchAdapter
 
         if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCH_TEXT, "")
+            searchText = savedInstanceState.getString(SEARCH_TEXT, EMPTY)
             binding.inputEditText.setText(searchText)
         }
 
-        binding.returnBack.setOnClickListener {
+        binding.returnBackImageView.setOnClickListener {
             finish()
         }
 
-        binding.clearIcon.setOnClickListener {
+        binding.clearIconImageView.setOnClickListener {
             binding.inputEditText.setText("")
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
@@ -57,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.visibility = clearButtonVisibility(s)
+                binding.clearIconImageView.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
 
