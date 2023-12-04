@@ -21,7 +21,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackTimeTextView.text = track.trackTime
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
-            .transform(RoundedCorners(R.dimen.small_corner_radius))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.small_corner_radius)))
             .placeholder(R.drawable.placeholder)
             .into(trackCoverImageView)
     }
