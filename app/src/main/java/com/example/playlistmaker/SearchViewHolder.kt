@@ -1,7 +1,6 @@
 package layout
 
 import Track
-import android.view.RoundedCorner
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -22,7 +21,7 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackTimeTextView.text = track.trackTime
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(R.dimen.small_corner_radius))
             .placeholder(R.drawable.placeholder)
             .into(trackCoverImageView)
     }
