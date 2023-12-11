@@ -7,7 +7,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/regular_icon_padding</item>
-        <item name="cornerRadius">@dimen/corner_radius</item>
+        <item name="cornerRadius">@dimen/medium_corner_radius</item>
         <item name="iconTint">?attr/colorOnSecondary</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>

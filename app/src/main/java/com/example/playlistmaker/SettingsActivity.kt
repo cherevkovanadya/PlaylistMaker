@@ -30,11 +30,11 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.returnBack.setOnClickListener {
+        binding.returnBackImageView.setOnClickListener {
             finish()
         }
 
-        binding.shareApp.setOnClickListener {
+        binding.shareAppTextView.setOnClickListener {
             Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.practicum_android_developer))
@@ -43,7 +43,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        binding.writeSupport.setOnClickListener {
+        binding.writeSupportTextView.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"))
             shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject))
@@ -51,7 +51,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        binding.termsOfUse.setOnClickListener {
+        binding.termsOfUseTextView.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yandex_terms_of_use)))
             startActivity(shareIntent)
         }

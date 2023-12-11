@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import SearchAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +12,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.MockPlaylist.mockPlaylist
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 
 
@@ -19,6 +22,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val EMPTY = ""
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -31,16 +35,19 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val searchAdapter = SearchAdapter(mockPlaylist)
+        binding.tracksRecyclerView.adapter = searchAdapter
+
         if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCH_TEXT, "")
+            searchText = savedInstanceState.getString(SEARCH_TEXT, EMPTY)
             binding.inputEditText.setText(searchText)
         }
 
-        binding.returnBack.setOnClickListener {
+        binding.returnBackImageView.setOnClickListener {
             finish()
         }
 
-        binding.clearIcon.setOnClickListener {
+        binding.clearIconImageView.setOnClickListener {
             binding.inputEditText.setText("")
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
@@ -51,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.visibility = clearButtonVisibility(s)
+                binding.clearIconImageView.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
 

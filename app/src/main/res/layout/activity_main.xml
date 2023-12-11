@@ -25,7 +25,7 @@
         android:paddingTop="40dp">
 
         <Button
-            android:id="@+id/search"
+            android:id="@+id/searchButton"
             style="@style/MainButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -34,7 +34,7 @@
             app:icon="@drawable/search" />
 
         <Button
-            android:id="@+id/media_library"
+            android:id="@+id/mediaLibraryButton"
             style="@style/MainButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -43,7 +43,7 @@
             app:icon="@drawable/media_library" />
 
         <Button
-            android:id="@+id/settings"
+            android:id="@+id/settingsButton"
             style="@style/MainButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"

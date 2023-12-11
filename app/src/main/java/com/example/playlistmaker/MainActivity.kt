@@ -20,17 +20,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.search.setOnClickListener {
+        binding.searchButton.setOnClickListener {
             val searchIntent = Intent(this, SearchActivity::class.java)
             startActivity(searchIntent)
         }
 
-        binding.mediaLibrary.setOnClickListener {
+        binding.mediaLibraryButton.setOnClickListener {
             val mediaLibraryIntent = Intent(this, MediaLibraryActivity::class.java)
             startActivity(mediaLibraryIntent)
         }
 
-        binding.settings.setOnClickListener {
+        binding.settingsButton.setOnClickListener {
             val settingsIntent = Intent(this, SettingsActivity::class.java)
             startActivity(settingsIntent)
         }
