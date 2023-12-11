@@ -13,4 +13,7 @@
     <string name="email">cherevkovanadezhda@yandex.ru</string>
     <string name="yandex_terms_of_use">https://yandex.ru/legal/practicum_offer/</string>
     <string name="practicum_android_developer">https://practicum.yandex.ru/android-developer/</string>
+    <string name="no_search_results">Ничего не нашлось</string>
+    <string name="server_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh_search">Обновить</string>
 </resources>

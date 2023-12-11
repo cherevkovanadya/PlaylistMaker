@@ -3,7 +3,7 @@
     <style name="MainButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:backgroundTint">?attr/colorOnPrimary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
-        <item name="android:textSize">@dimen/header_text</item>
+        <item name="android:textSize">@dimen/header2_text</item>
         <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/regular_icon_padding</item>

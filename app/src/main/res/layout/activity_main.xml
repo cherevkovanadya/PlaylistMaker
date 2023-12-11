@@ -15,7 +15,7 @@
         android:fontFamily="@font/ys_display_medium"
         android:text="@string/title"
         android:textColor="?attr/colorOnPrimary"
-        android:textSize="@dimen/header_text" />
+        android:textSize="@dimen/header2_text" />
 
     <LinearLayout
         android:layout_width="match_parent"

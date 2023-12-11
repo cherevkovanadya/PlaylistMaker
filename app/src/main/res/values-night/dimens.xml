@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="header_text">22sp</dimen>
+    <dimen name="header2_text">22sp</dimen>
     <dimen name="medium_text">16sp</dimen>
     <dimen name="medium_padding">16dp</dimen>
+    <dimen name="big_corner_radius">54dp</dimen>
 </resources>

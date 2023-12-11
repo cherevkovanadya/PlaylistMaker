@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimaryVariant"
     android:orientation="vertical">
 
@@ -26,10 +26,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_text"
-            android:layout_marginTop="@dimen/medium_margin_text"
+            android:layout_marginTop="@dimen/medium_margin"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/search"
-            android:textSize="@dimen/header_text" />
+            android:textSize="@dimen/header2_text" />
     </LinearLayout>
 
     <LinearLayout
@@ -58,8 +58,10 @@
             android:background="@drawable/search_background"
             android:fontFamily="@font/ys_display_medium"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
+            android:singleLine="true"
             android:textColor="?attr/colorOnSecondary"
             android:textColorHint="?attr/colorOnPrimaryContainer"
             android:textSize="@dimen/medium_text" />
@@ -76,11 +78,78 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tracksRecyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/medium_padding"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/track_view"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tracksRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/medium_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/track_view" />
+
+        <LinearLayout
+            android:id="@+id/placeholderNoSearchResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/hard_margin"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:src="@drawable/placeholder_no_search_results" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/no_search_results"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="@dimen/header1_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/placeholderServerError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_horizontal"
+            android:layout_marginTop="@dimen/hard_margin"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/medium_margin"
+                android:src="@drawable/placeholder_server_error" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_horizontal"
+                android:fontFamily="@font/ys_display_medium"
+                android:gravity="center_horizontal"
+                android:text="@string/server_error"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="@dimen/header1_text" />
+
+            <Button
+                android:id="@+id/refreshSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/refresh_button_background"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/refresh_search"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorSecondaryVariant"
+                android:textSize="@dimen/regular_text" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
