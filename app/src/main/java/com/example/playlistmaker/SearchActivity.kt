@@ -9,9 +9,11 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.MockPlaylist.mockPlaylist
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,13 +25,17 @@ class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
     private lateinit var binding: ActivitySearchBinding
     private val iTunesBaseUrl: String = "https://itunes.apple.com"
+    private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
     private val retrofit = Retrofit.Builder()
+        .client(okHttpClient)
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val iTunesService = retrofit.create(ITunesApi::class.java)
     private var tracks = ArrayList<Track>()
-    //private val searchAdapter = SearchAdapter(mockPlaylist)
     private lateinit var searchAdapter: SearchAdapter
 
     private companion object {
@@ -62,6 +68,10 @@ class SearchActivity : AppCompatActivity() {
             binding.inputEditText.setText("")
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
+            tracks.clear()
+            searchAdapter.notifyDataSetChanged()
+            binding.placeholderNoSearchResults.isVisible = false
+            binding.placeholderServerError.isVisible = false
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -80,7 +90,8 @@ class SearchActivity : AppCompatActivity() {
 
         searchAdapter = SearchAdapter(tracks)
         searchAdapter.tracks = tracks
-        binding.tracksRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.tracksRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.tracksRecyclerView.adapter = searchAdapter
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -102,22 +113,23 @@ class SearchActivity : AppCompatActivity() {
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 tracks.clear()
-                                binding.placeholderNoSearchResults.visibility = View.GONE
-                                binding.placeholderServerError.visibility = View.GONE
+                                binding.placeholderNoSearchResults.isVisible = false
+                                binding.placeholderServerError.isVisible = false
                                 tracks.addAll(response.body()?.results!!)
                                 searchAdapter.notifyDataSetChanged()
                             } else {
                                 tracks.clear()
                                 searchAdapter.notifyDataSetChanged()
-                                binding.placeholderNoSearchResults.visibility = View.VISIBLE
+                                binding.placeholderServerError.isVisible = false
+                                binding.placeholderNoSearchResults.isVisible = true
                             }
                         }
 
                         else -> {
                             tracks.clear()
                             searchAdapter.notifyDataSetChanged()
-                            binding.placeholderNoSearchResults.visibility = View.GONE
-                            binding.placeholderServerError.visibility = View.VISIBLE
+                            binding.placeholderNoSearchResults.isVisible = false
+                            binding.placeholderServerError.isVisible = true
                         }
                     }
                 }
@@ -126,9 +138,9 @@ class SearchActivity : AppCompatActivity() {
                     t.printStackTrace()
                     tracks.clear()
                     searchAdapter.notifyDataSetChanged()
-                    binding.placeholderServerError.visibility = View.VISIBLE
+                    binding.placeholderServerError.isVisible = true
                     binding.refreshSearch.setOnClickListener {
-                        binding.placeholderServerError.visibility = View.GONE
+                        binding.placeholderServerError.isVisible = false
                         searchTracks()
                     }
                 }
