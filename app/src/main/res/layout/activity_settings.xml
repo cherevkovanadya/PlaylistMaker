@@ -25,10 +25,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_text"
-            android:layout_marginTop="@dimen/medium_margin_text"
+            android:layout_marginTop="@dimen/medium_margin"
             android:fontFamily="@font/ys_display_medium"
             android:text="@string/settings"
-            android:textSize="@dimen/header_text" />
+            android:textSize="@dimen/header2_text" />
     </LinearLayout>
 
     <FrameLayout

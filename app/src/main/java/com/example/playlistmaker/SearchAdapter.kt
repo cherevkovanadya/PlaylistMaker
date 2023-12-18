@@ -5,7 +5,7 @@ import com.example.playlistmaker.R
 import layout.SearchViewHolder
 
 class SearchAdapter (
-    private val tracks: ArrayList<Track>
+    var tracks: ArrayList<Track>
 ) : RecyclerView.Adapter<SearchViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)

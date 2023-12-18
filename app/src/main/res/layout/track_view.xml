@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/trackCoverImageView"
-        android:layout_width="@dimen/large_image_size"
-        android:layout_height="@dimen/large_image_size"
+        android:layout_width="@dimen/regular_image_size"
+        android:layout_height="@dimen/regular_image_size"
         android:layout_marginVertical="@dimen/light_margin_vertical"
         android:layout_marginEnd="@dimen/light_margin"
         android:scaleType="centerCrop" />
