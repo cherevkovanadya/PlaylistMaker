@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginVertical="@dimen/medium_margin_vertical"
+            android:layout_marginVertical="@dimen/regular_margin_vertical"
             android:layout_marginStart="@dimen/medium_icon_padding"
             android:layout_marginEnd="@dimen/regular_icon_padding"
             android:src="@drawable/search"
@@ -89,6 +89,46 @@
             android:layout_marginTop="@dimen/medium_padding"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/track_view" />
+
+        <LinearLayout
+            android:id="@+id/searchHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/SearchPlaceholderTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/search_history" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/historySearchRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_weight="1"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/track_view" />
+
+            <Button
+                android:id="@+id/clearHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/hard_margin_vertical"
+                android:layout_weight="0"
+                android:background="@drawable/refresh_button_background"
+                android:fontFamily="@font/ys_display_medium"
+                android:text="@string/clear_search_history"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorSecondaryVariant"
+                android:textSize="@dimen/regular_text"
+                app:backgroundTint="?attr/colorSecondary" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/placeholderNoSearchResults"

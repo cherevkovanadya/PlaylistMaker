@@ -34,7 +34,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="@dimen/hard_margin_vertical">
 
         <TextView
             style="@style/TextStyle"
@@ -44,12 +44,12 @@
             android:paddingStart="@dimen/medium_padding"
             android:text="@string/dark_theme" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/changeThemeSwitchCompat"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="@dimen/regular_margin"
             android:alpha="0.6"
             android:checked="false"
             android:theme="@style/BrandedSwitch.control" />
@@ -60,8 +60,8 @@
         style="@style/TextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_between_text"
         android:paddingHorizontal="@dimen/medium_padding"
+        android:paddingVertical="@dimen/padding_between_text"
         android:text="@string/share_application"
         app:drawableEndCompat="@drawable/share"
         app:drawableTint="?attr/colorButtonNormal" />
@@ -71,8 +71,8 @@
         style="@style/TextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_between_text"
         android:paddingHorizontal="@dimen/medium_padding"
+        android:paddingVertical="@dimen/padding_between_text"
         android:text="@string/write_support"
         app:drawableEndCompat="@drawable/support"
         app:drawableTint="?attr/colorButtonNormal" />
@@ -82,8 +82,8 @@
         style="@style/TextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_between_text"
         android:paddingHorizontal="@dimen/medium_padding"
+        android:paddingVertical="@dimen/padding_between_text"
         android:text="@string/terms_of_use"
         app:drawableEndCompat="@drawable/open_file"
         app:drawableTint="?attr/colorButtonNormal" />
