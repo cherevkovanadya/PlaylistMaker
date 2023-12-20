@@ -3,6 +3,6 @@ data class Track(
     val artistName: String,
     val trackTimeMillis: Int,
     val artworkUrl100: String,
-    val trackID: Int
+    val trackId: Int
 ) {
 }

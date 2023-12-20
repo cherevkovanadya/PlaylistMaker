@@ -4,5 +4,5 @@ import Track
 
 data class TracksResponse(
     val resultCount: Int,
-    val results: ArrayList<Track>
+    val results: MutableList<Track>
 )

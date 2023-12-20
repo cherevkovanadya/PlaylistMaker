@@ -5,10 +5,10 @@ import Track
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,12 +38,13 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ITunesApi::class.java)
     private var tracks: MutableList<Track> = mutableListOf()
     private var tracksHistory: MutableList<Track> = mutableListOf()
-    private lateinit var searchAdapter: SearchAdapter
-    private lateinit var searchHistoryAdapter: SearchHistoryAdapter
+    private var searchAdapter = SearchAdapter(tracks, { position -> onListItemClick(position) })
+    private var searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { })
 
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val EMPTY = ""
+        const val NUMBER_OF_SONGS_IN_HISTORY = 10
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -83,17 +84,14 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.inputEditText.text.isEmpty()) {
                 tracksHistory = searchHistory.read().toMutableList()
-                searchHistoryAdapter =
-                    SearchHistoryAdapter(tracksHistory) { position -> onListItemClick(position) }
+                searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { })
                 binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 binding.searchHistory.isVisible = tracksHistory.isNotEmpty()
                 binding.clearHistoryButton.setOnClickListener {
                     binding.searchHistory.isVisible = false
                     searchHistory.clear()
                     tracksHistory = searchHistory.read().toMutableList()
-                    searchHistoryAdapter = SearchHistoryAdapter(
-                        tracksHistory,
-                        { position -> onListItemClick(position) })
+                    searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { })
                     binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 }
             } else {
@@ -114,9 +112,7 @@ class SearchActivity : AppCompatActivity() {
                     searchAdapter.notifyDataSetChanged()
                     tracksHistory = searchHistory.read().toMutableList()
                     if (tracksHistory.isNotEmpty()) {
-                        searchHistoryAdapter = SearchHistoryAdapter(
-                            tracksHistory,
-                            { position -> onListItemClick(position) })
+                        searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                         binding.searchHistory.isVisible = true
                     } else {
@@ -126,9 +122,7 @@ class SearchActivity : AppCompatActivity() {
                         binding.searchHistory.isVisible = false
                         searchHistory.clear()
                         tracksHistory = searchHistory.read().toMutableList()
-                        searchHistoryAdapter = SearchHistoryAdapter(
-                            tracksHistory,
-                            { position -> onListItemClick(position) })
+                        searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                     }
                 } else {
@@ -174,8 +168,11 @@ class SearchActivity : AppCompatActivity() {
     private fun onListItemClick(position: Int) {
         val sharedPreferences = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
         val searchHistory = SearchHistory(sharedPreferences)
+        tracksHistory.removeIf { it.trackId == tracks[position].trackId }
         tracksHistory.add(0, tracks[position])
-        tracksHistory = tracksHistory.take(10).toMutableList()
+        if (tracksHistory.size > NUMBER_OF_SONGS_IN_HISTORY) {
+            tracksHistory.removeAt(tracksHistory.size - 1)
+        }
         searchHistory.write(tracksHistory)
     }
 
