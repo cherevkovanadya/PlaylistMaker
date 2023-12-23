@@ -1,25 +1,14 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.text.Layout
-import android.view.FrameMetrics
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.ContentFrameLayout
-import androidx.appcompat.widget.SwitchCompat
-import com.example.playlistmaker.databinding.ActivityMainBinding
-import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+
+const val THEME_SETTINGS_PREFERENCES = "theme_switcher_preferences"
+const val SWITCH_KEY = "key_for_switch"
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -32,6 +21,15 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.returnBackImageView.setOnClickListener {
             finish()
+        }
+
+        binding.themeSwitcher.isChecked = (applicationContext as App).darkTheme
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
+            val sharedPrefs = getSharedPreferences(THEME_SETTINGS_PREFERENCES, MODE_PRIVATE)
+            sharedPrefs.edit()
+                .putBoolean(SWITCH_KEY, checked)
+                .apply()
         }
 
         binding.shareAppTextView.setOnClickListener {
@@ -52,7 +50,8 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.termsOfUseTextView.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yandex_terms_of_use)))
+            val shareIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.yandex_terms_of_use)))
             startActivity(shareIntent)
         }
     }
