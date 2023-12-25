@@ -38,8 +38,21 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ITunesApi::class.java)
     private var tracks: MutableList<Track> = mutableListOf()
     private var tracksHistory: MutableList<Track> = mutableListOf()
-    private var searchAdapter = SearchAdapter(tracks, { position -> onSearchListItemClick(position) })
-    private var searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+    private var searchAdapter =
+        SearchAdapter(tracks, { position -> onSearchListItemClick(position) })
+    private var searchHistoryAdapter =
+        SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+    private val track = Track(
+        "Yesterday (Remastered 2009)",
+        "The Beatles",
+        335000,
+        "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg",
+        0,
+        "Yesterday (Remastered 2009)",
+        "1965",
+        "Rock",
+        "Великобритания"
+    )
 
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
@@ -84,14 +97,18 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.inputEditText.text.isEmpty()) {
                 tracksHistory = searchHistory.read().toMutableList()
-                searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+                searchHistoryAdapter = SearchHistoryAdapter(
+                    tracksHistory,
+                    { position -> onHistoryListItemClick(position) })
                 binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 binding.searchHistory.isVisible = tracksHistory.isNotEmpty()
                 binding.clearHistoryButton.setOnClickListener {
                     binding.searchHistory.isVisible = false
                     searchHistory.clear()
                     tracksHistory = searchHistory.read().toMutableList()
-                    searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+                    searchHistoryAdapter = SearchHistoryAdapter(
+                        tracksHistory,
+                        { position -> onHistoryListItemClick(position) })
                     binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 }
             } else {
@@ -112,7 +129,9 @@ class SearchActivity : AppCompatActivity() {
                     searchAdapter.notifyDataSetChanged()
                     tracksHistory = searchHistory.read().toMutableList()
                     if (tracksHistory.isNotEmpty()) {
-                        searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+                        searchHistoryAdapter = SearchHistoryAdapter(
+                            tracksHistory,
+                            { position -> onHistoryListItemClick(position) })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                         binding.searchHistory.isVisible = true
                     } else {
@@ -122,7 +141,9 @@ class SearchActivity : AppCompatActivity() {
                         binding.searchHistory.isVisible = false
                         searchHistory.clear()
                         tracksHistory = searchHistory.read().toMutableList()
-                        searchHistoryAdapter = SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
+                        searchHistoryAdapter = SearchHistoryAdapter(
+                            tracksHistory,
+                            { position -> onHistoryListItemClick(position) })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                     }
                 } else {
@@ -167,6 +188,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onHistoryListItemClick(position: Int) {
         val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra("track", track)
         startActivity(playerIntent)
     }
 
@@ -180,6 +202,7 @@ class SearchActivity : AppCompatActivity() {
         }
         searchHistory.write(tracksHistory)
         val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra("track", track)
         startActivity(playerIntent)
     }
 
