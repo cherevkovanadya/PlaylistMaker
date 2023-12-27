@@ -188,7 +188,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onHistoryListItemClick(position: Int) {
         val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra("track", track)
+        playerIntent.putExtra("track", tracksHistory[position])
         startActivity(playerIntent)
     }
 
@@ -202,7 +202,7 @@ class SearchActivity : AppCompatActivity() {
         }
         searchHistory.write(tracksHistory)
         val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra("track", track)
+        playerIntent.putExtra("track", tracks[position])
         startActivity(playerIntent)
     }
 

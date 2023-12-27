@@ -23,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val track = intent.getParcelableExtra<Track>("track")
+        @Suppress("DEPRECATION") val track = intent.getParcelableExtra<Track>("track")
         if (track != null) {
             Glide.with(binding.trackCoverImageView.context)
                 .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
