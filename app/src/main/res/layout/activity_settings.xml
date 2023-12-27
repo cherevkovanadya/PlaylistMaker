@@ -34,7 +34,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/hard_margin_vertical">
+        android:layout_marginTop="@dimen/medium1_margin_vertical">
 
         <TextView
             style="@style/TextStyle"

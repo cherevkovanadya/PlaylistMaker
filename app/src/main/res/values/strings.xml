@@ -18,4 +18,9 @@
     <string name="refresh_search">Обновить</string>
     <string name="search_history">Вы искали</string>
     <string name="clear_search_history">Очистить историю</string>
+    <string name="duration_of_track">Длительность</string>
+    <string name="collection">Альбом</string>
+    <string name="release_date">Год</string>
+    <string name="primary_genre">Жанр</string>
+    <string name="country">Страна</string>
 </resources>

@@ -15,6 +15,7 @@
         <item name="colorButtonNormal">@color/grey</item>
         <item name="colorOnPrimaryContainer">@color/grey</item>
         <item name="colorOnSecondaryContainer">@color/grey_light</item>
+        <item name="colorOnSurface">@color/grey</item>
     </style>
     <style name="BrandedSwitch.control" parent="Theme.AppCompat.DayNight">
         <!-- active thumb & track color (30% transparency) -->
