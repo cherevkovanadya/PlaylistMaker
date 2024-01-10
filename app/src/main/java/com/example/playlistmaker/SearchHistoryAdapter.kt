@@ -1,18 +1,18 @@
 package com.example.playlistmaker
 
-import Track
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import layout.SearchViewHolder
 
 class SearchHistoryAdapter(
-    var tracksHistory: MutableList<Track>,
-    private val onItemClicked: (position: Int) -> Unit
+    private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<SearchViewHolder>() {
+
+    var tracksHistory: MutableList<Track> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
-        return SearchViewHolder(view, onItemClicked)
+        return SearchViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -21,5 +21,10 @@ class SearchHistoryAdapter(
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         holder.bind(tracksHistory[position])
+        holder.itemView.setOnClickListener{ clickListener.onTrackClick(tracksHistory[position])}
+    }
+
+    fun interface TrackClickListener {
+        fun onTrackClick(track: Track)
     }
 }

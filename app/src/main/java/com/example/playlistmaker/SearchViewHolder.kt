@@ -1,6 +1,6 @@
 package layout
 
-import Track
+import com.example.playlistmaker.Track
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,17 +12,12 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class SearchViewHolder(
-    itemView: View,
-    private val onItemClicked: (position: Int) -> Unit
-) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    itemView: View
+) : RecyclerView.ViewHolder(itemView) {
     private val trackNameTextView = itemView.findViewById<TextView>(R.id.trackNameTextView)
     private val artistNameTextView = itemView.findViewById<TextView>(R.id.artistNameTextView)
     private val trackTimeTextView = itemView.findViewById<TextView>(R.id.trackTimeTextView)
     private val trackCoverImageView = itemView.findViewById<ImageView>(R.id.trackCoverImageView)
-
-    init {
-        itemView.setOnClickListener(this)
-    }
 
     fun bind(track: Track) {
         trackNameTextView.text = track.trackName
@@ -34,9 +29,5 @@ class SearchViewHolder(
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.small_corner_radius)))
             .placeholder(R.drawable.placeholder)
             .into(trackCoverImageView)
-    }
-
-    override fun onClick(v: View?) {
-        onItemClicked(adapterPosition)
     }
 }

@@ -1,9 +1,10 @@
 package com.example.playlistmaker
 
 import SearchAdapter
-import Track
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -23,41 +24,56 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    private var searchText: String = ""
+    private var searchText: String = EMPTY
+
     private lateinit var binding: ActivitySearchBinding
-    private val iTunesBaseUrl: String = "https://itunes.apple.com"
+
     private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(logging)
         .build()
+
     private val retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .baseUrl(iTunesBaseUrl)
+        .baseUrl(ITUNES_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val iTunesService = retrofit.create(ITunesApi::class.java)
+
     private var tracks: MutableList<Track> = mutableListOf()
     private var tracksHistory: MutableList<Track> = mutableListOf()
-    private var searchAdapter =
-        SearchAdapter(tracks, { position -> onSearchListItemClick(position) })
-    private var searchHistoryAdapter =
-        SearchHistoryAdapter(tracksHistory, { position -> onHistoryListItemClick(position) })
-    private val track = Track(
-        "Yesterday (Remastered 2009)",
-        "The Beatles",
-        335000,
-        "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg",
-        0,
-        "Yesterday (Remastered 2009)",
-        "1965",
-        "Rock",
-        "Великобритания"
-    )
+
+    private val searchAdapter = SearchAdapter { track ->
+        if (clickDebounce()) {
+            tracksHistory.removeAll { it.trackId == track.trackId }
+        }
+        tracksHistory.add(0, track)
+        if (tracksHistory.size > NUMBER_OF_SONGS_IN_HISTORY) {
+            tracksHistory.removeAt(tracksHistory.size - 1)
+        }
+        val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra("track", track)
+        startActivity(playerIntent)
+    }
+    private val searchHistoryAdapter = SearchHistoryAdapter {
+        if (clickDebounce()) {
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra("track", it)
+            startActivity(playerIntent)
+        }
+    }
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchRequest() }
 
     private companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val EMPTY = ""
+        const val ITUNES_BASE_URL = "https://itunes.apple.com"
         const val NUMBER_OF_SONGS_IN_HISTORY = 10
+        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -82,7 +98,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.clearIconImageView.setOnClickListener {
-            binding.inputEditText.setText("")
+            binding.inputEditText.setText(EMPTY)
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
             tracks.clear()
@@ -97,18 +113,12 @@ class SearchActivity : AppCompatActivity() {
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.inputEditText.text.isEmpty()) {
                 tracksHistory = searchHistory.read().toMutableList()
-                searchHistoryAdapter = SearchHistoryAdapter(
-                    tracksHistory,
-                    { position -> onHistoryListItemClick(position) })
                 binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 binding.searchHistory.isVisible = tracksHistory.isNotEmpty()
                 binding.clearHistoryButton.setOnClickListener {
                     binding.searchHistory.isVisible = false
                     searchHistory.clear()
                     tracksHistory = searchHistory.read().toMutableList()
-                    searchHistoryAdapter = SearchHistoryAdapter(
-                        tracksHistory,
-                        { position -> onHistoryListItemClick(position) })
                     binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                 }
             } else {
@@ -123,15 +133,13 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIconImageView.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
+                searchDebounce()
                 if (binding.inputEditText.hasFocus() && s?.isEmpty() == true) {
                     binding.tracksRecyclerView.isVisible = false
                     tracks.clear()
                     searchAdapter.notifyDataSetChanged()
                     tracksHistory = searchHistory.read().toMutableList()
                     if (tracksHistory.isNotEmpty()) {
-                        searchHistoryAdapter = SearchHistoryAdapter(
-                            tracksHistory,
-                            { position -> onHistoryListItemClick(position) })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                         binding.searchHistory.isVisible = true
                     } else {
@@ -141,9 +149,6 @@ class SearchActivity : AppCompatActivity() {
                         binding.searchHistory.isVisible = false
                         searchHistory.clear()
                         tracksHistory = searchHistory.read().toMutableList()
-                        searchHistoryAdapter = SearchHistoryAdapter(
-                            tracksHistory,
-                            { position -> onHistoryListItemClick(position) })
                         binding.historySearchRecyclerView.adapter = searchHistoryAdapter
                     }
                 } else {
@@ -160,7 +165,6 @@ class SearchActivity : AppCompatActivity() {
         binding.historySearchRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        searchAdapter = SearchAdapter(tracks, { position -> onSearchListItemClick(position) })
         searchAdapter.tracks = tracks
         binding.tracksRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -168,7 +172,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTracks()
+                searchRequest()
             }
             false
         }
@@ -186,24 +190,18 @@ class SearchActivity : AppCompatActivity() {
             .apply()
     }
 
-    private fun onHistoryListItemClick(position: Int) {
-        val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra("track", tracksHistory[position])
-        startActivity(playerIntent)
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
-    private fun onSearchListItemClick(position: Int) {
-        val sharedPreferences = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
-        val searchHistory = SearchHistory(sharedPreferences)
-        tracksHistory.removeIf { it.trackId == tracks[position].trackId }
-        tracksHistory.add(0, tracks[position])
-        if (tracksHistory.size > NUMBER_OF_SONGS_IN_HISTORY) {
-            tracksHistory.removeAt(tracksHistory.size - 1)
-        }
-        searchHistory.write(tracksHistory)
-        val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra("track", tracks[position])
-        startActivity(playerIntent)
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun createJsonFromTracksList(tracksHistory: MutableList<Track>): String {
@@ -214,50 +212,57 @@ class SearchActivity : AppCompatActivity() {
         return Gson().fromJson(json, Array<Track>::class.java)
     }
 
-    private fun searchTracks() {
-        iTunesService.getTracks(binding.inputEditText.text.toString())
-            .enqueue(object : Callback<TracksResponse> {
-                override fun onResponse(
-                    call: Call<TracksResponse>,
-                    response: Response<TracksResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
+    private fun searchRequest() {
+        if (searchText.isNotEmpty()) {
+            binding.placeholderNoSearchResults.isVisible = false
+            binding.placeholderServerError.isVisible = false
+            binding.tracksRecyclerView.isVisible = false
+            binding.searchProgressBar.isVisible = true
+            iTunesService.getTracks(binding.inputEditText.text.toString())
+                .enqueue(object : Callback<TracksResponse> {
+                    override fun onResponse(
+                        call: Call<TracksResponse>,
+                        response: Response<TracksResponse>
+                    ) {
+                        binding.searchProgressBar.isVisible = false
+                        when (response.code()) {
+                            200 -> {
+                                if (response.body()?.results?.isNotEmpty() == true) {
+                                    tracks.clear()
+                                    binding.placeholderNoSearchResults.isVisible = false
+                                    binding.placeholderServerError.isVisible = false
+                                    tracks.addAll(response.body()?.results!!)
+                                    searchAdapter.notifyDataSetChanged()
+                                } else {
+                                    tracks.clear()
+                                    searchAdapter.notifyDataSetChanged()
+                                    binding.placeholderServerError.isVisible = false
+                                    binding.placeholderNoSearchResults.isVisible = true
+                                }
+                            }
+
+                            else -> {
                                 tracks.clear()
+                                searchAdapter.notifyDataSetChanged()
                                 binding.placeholderNoSearchResults.isVisible = false
-                                binding.placeholderServerError.isVisible = false
-                                tracks.addAll(response.body()?.results!!)
-                                searchAdapter.notifyDataSetChanged()
-                            } else {
-                                tracks.clear()
-                                searchAdapter.notifyDataSetChanged()
-                                binding.placeholderServerError.isVisible = false
-                                binding.placeholderNoSearchResults.isVisible = true
+                                binding.placeholderServerError.isVisible = true
                             }
                         }
+                    }
 
-                        else -> {
-                            tracks.clear()
-                            searchAdapter.notifyDataSetChanged()
-                            binding.placeholderNoSearchResults.isVisible = false
-                            binding.placeholderServerError.isVisible = true
+                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                        t.printStackTrace()
+                        tracks.clear()
+                        searchAdapter.notifyDataSetChanged()
+                        binding.placeholderServerError.isVisible = true
+                        binding.placeholderNoSearchResults.isVisible = false
+                        binding.refreshSearch.setOnClickListener {
+                            binding.placeholderServerError.isVisible = false
+                            searchRequest()
                         }
                     }
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    t.printStackTrace()
-                    tracks.clear()
-                    searchAdapter.notifyDataSetChanged()
-                    binding.placeholderServerError.isVisible = true
-                    binding.placeholderNoSearchResults.isVisible = false
-                    binding.refreshSearch.setOnClickListener {
-                        binding.placeholderServerError.isVisible = false
-                        searchTracks()
-                    }
-                }
-            })
+                })
+        }
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
