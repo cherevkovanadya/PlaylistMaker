@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="cursor_width">2dp</dimen>
     <dimen name="regular_icon_padding">8dp</dimen>
     <dimen name="medium_icon_padding">12dp</dimen>
     <dimen name="padding_horizontal">12dp</dimen>

@@ -5,7 +5,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.Track
 import layout.SearchViewHolder
 
-class SearchAdapter (
+class SearchAdapter(
     private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<SearchViewHolder>() {
 
@@ -22,7 +22,7 @@ class SearchAdapter (
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         holder.bind(tracks[position])
-        holder.itemView.setOnClickListener{ clickListener.onTrackClick(tracks[position])}
+        holder.itemView.setOnClickListener { clickListener.onTrackClick(tracks[position]) }
     }
 
     fun interface TrackClickListener {

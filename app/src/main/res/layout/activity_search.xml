@@ -64,6 +64,7 @@
             android:singleLine="true"
             android:textColor="?attr/colorOnSecondary"
             android:textColorHint="?attr/colorOnPrimaryContainer"
+            android:textCursorDrawable="@drawable/cursor_color"
             android:textSize="@dimen/medium_text" />
 
         <ImageView
