@@ -64,6 +64,7 @@
             android:singleLine="true"
             android:textColor="?attr/colorOnSecondary"
             android:textColorHint="?attr/colorOnPrimaryContainer"
+            android:textCursorDrawable="@drawable/cursor_color"
             android:textSize="@dimen/medium_text" />
 
         <ImageView
@@ -81,6 +82,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/searchProgressBar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/blue"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tracksRecyclerView"

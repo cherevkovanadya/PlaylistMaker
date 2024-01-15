@@ -75,7 +75,7 @@
         android:maxLines="1"
         android:textColor="?attr/colorSecondary"
         android:textSize="@dimen/regular_text"
-        app:layout_constraintBottom_toTopOf="@id/resumeButton"
+        app:layout_constraintBottom_toTopOf="@id/playButtonClone"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintStart_toEndOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/trackNameTextView" />
@@ -87,9 +87,18 @@
         android:layout_marginStart="@dimen/light_margin"
         android:layout_marginTop="@dimen/hard_margin_vertical"
         android:src="@drawable/add_to_playlist_button"
-        app:layout_constraintEnd_toStartOf="@id/resumeButton"
+        app:layout_constraintEnd_toStartOf="@id/playButtonClone"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/artistNameTextView" />
+
+    <View
+        android:id="@+id/playButtonClone"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toStartOf="@id/likeTrackButton"
+        app:layout_constraintStart_toEndOf="@id/addToPlaylistButton"
         app:layout_constraintTop_toBottomOf="@id/artistNameTextView" />
 
     <ImageView
@@ -104,6 +113,18 @@
         app:tint="?attr/colorSecondary" />
 
     <ImageView
+        android:id="@+id/pauseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/pause_button"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/likeTrackButton"
+        app:layout_constraintStart_toEndOf="@id/addToPlaylistButton"
+        app:layout_constraintTop_toBottomOf="@id/artistNameTextView"
+        app:tint="?attr/colorSecondary" />
+
+    <ImageView
         android:id="@+id/likeTrackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -111,7 +132,7 @@
         android:layout_marginEnd="@dimen/light_margin"
         android:src="@drawable/like_track_button"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toEndOf="@id/resumeButton"
+        app:layout_constraintStart_toEndOf="@id/playButtonClone"
         app:layout_constraintTop_toBottomOf="@id/artistNameTextView" />
 
     <TextView
@@ -124,12 +145,12 @@
         android:foregroundGravity="center_horizontal"
         android:gravity="center_horizontal"
         android:maxLines="1"
-        android:text="0:30"
+        android:text="0:00"
         android:textColor="?attr/colorSecondary"
         android:textSize="@dimen/regular_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/resumeButton" />
+        app:layout_constraintTop_toBottomOf="@id/playButtonClone" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/divider"
