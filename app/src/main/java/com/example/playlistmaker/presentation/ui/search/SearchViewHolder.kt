@@ -1,6 +1,6 @@
-package layout
+package com.example.playlistmaker.presentation.ui.search
 
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.domain.models.Track
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,7 +23,7 @@ class SearchViewHolder(
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
         trackTimeTextView.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeString)
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.small_corner_radius)))

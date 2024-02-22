@@ -1,12 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
-import android.os.Parcel
-import android.os.Parcelable
-import kotlinx.parcelize.Parceler
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class Track(
+data class TrackDto(
     val trackName: String? = "",
     val artistName: String? = "",
     val trackTimeMillis: Int = 0,
@@ -17,4 +11,4 @@ data class Track(
     val primaryGenreName: String? = "",
     val country: String? = "",
     val previewUrl: String? = "",
-): Parcelable
+)

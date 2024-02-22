@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.search
 
-import SearchAdapter
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,13 +7,20 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.presentation.ui.player.PlayerActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.SEARCH_HISTORY_KEY
+import com.example.playlistmaker.data.SEARCH_HISTORY_PREFERENCES
+import com.example.playlistmaker.data.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.data.dto.TracksSearchResponse
+import com.example.playlistmaker.data.network.ITunesApi
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
@@ -45,8 +51,14 @@ class SearchActivity : AppCompatActivity() {
     private var tracks: MutableList<Track> = mutableListOf()
     private var tracksHistory: MutableList<Track> = mutableListOf()
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var searchHistory: SearchHistory
+    //private lateinit var sharedPreferences: SharedPreferences
+    //private lateinit var searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl
+
+    private val searchHistorySharedPreferences by lazy {
+        Creator.provideSearchHistoryInteractor(
+            applicationContext
+        )
+    }
 
     private val searchAdapter = SearchAdapter { track ->
         if (clickDebounce()) {
@@ -86,7 +98,7 @@ class SearchActivity : AppCompatActivity() {
 
         loadSavedInstanceState(savedInstanceState)
 
-        loadSharedPreferences()
+        //loadSharedPreferences()
 
         setupReturnBackImageView()
 
@@ -118,10 +130,10 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSharedPreferences() {
-        sharedPreferences = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
-    }
+//    private fun loadSharedPreferences() {
+//        sharedPreferences = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
+//        searchHistoryRepositoryImpl = SearchHistoryRepositoryImpl(sharedPreferences)
+//    }
 
     private fun setupReturnBackImageView() {
         binding.returnBackImageView.setOnClickListener {
@@ -147,7 +159,7 @@ class SearchActivity : AppCompatActivity() {
         if (tracksHistory.size > NUMBER_OF_SONGS_IN_HISTORY) {
             tracksHistory.removeAt(tracksHistory.size - 1)
         }
-        searchHistory.write(tracksHistory)
+        searchHistorySharedPreferences.write(tracksHistory)
         val playerIntent = Intent(this, PlayerActivity::class.java)
         playerIntent.putExtra(getString(R.string.track), track)
         startActivity(playerIntent)
@@ -156,7 +168,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupClearHistoryButton() {
         binding.clearHistoryButton.setOnClickListener {
             binding.searchHistory.isVisible = false
-            searchHistory.clear()
+            searchHistorySharedPreferences.clear()
             tracksHistory.clear()
         }
     }
@@ -209,7 +221,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupHistorySearchRecyclerView() {
-        tracksHistory = searchHistory.read().toMutableList()
+        tracksHistory = searchHistorySharedPreferences.read().toMutableList()
         searchHistoryAdapter.tracksHistory = tracksHistory
         binding.historySearchRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -240,11 +252,11 @@ class SearchActivity : AppCompatActivity() {
             binding.placeholderServerError.isVisible = false
             binding.tracksRecyclerView.isVisible = false
             binding.searchProgressBar.isVisible = true
-            iTunesService.getTracks(binding.inputEditText.text.toString())
-                .enqueue(object : Callback<TracksResponse> {
+            iTunesService.searchTracks(binding.inputEditText.text.toString())
+                .enqueue(object : Callback<TracksSearchResponse> {
                     override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
+                        call: Call<TracksSearchResponse>,
+                        response: Response<TracksSearchResponse>
                     ) {
                         binding.searchProgressBar.isVisible = false
                         when (response.code()) {
@@ -273,7 +285,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
                         t.printStackTrace()
                         tracks.clear()
                         searchAdapter.notifyDataSetChanged()
