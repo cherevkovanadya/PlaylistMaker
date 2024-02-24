@@ -1,7 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.player
 
 import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import java.util.Locale
 
@@ -19,7 +21,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
     private val handler = Handler(Looper.getMainLooper())
-    private var mediaPlayer = MediaPlayer()
+    private val mediaPlayer = Creator.providePlayerInteractor()
     private var trackUrl: String? = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,10 +50,9 @@ class PlayerActivity : AppCompatActivity() {
                 .into(binding.trackCoverImageView)
             binding.trackNameTextView.text = track.trackName
             binding.artistNameTextView.text = track.artistName
-            binding.trackTimeValueTextView.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            binding.trackTimeValueTextView.text = track.trackTimeString.toString()
             binding.collectionNameValueTextView.text = track.collectionName
-            binding.releaseDateValueTextView.text =track.releaseDate!!.substring(0,4)
+            binding.releaseDateValueTextView.text = track.releaseDate
             binding.primaryGenreNameValueTextView.text = track.primaryGenreName
             binding.countryValueTextView.text = track.country
             trackUrl = track.previewUrl
@@ -83,20 +84,16 @@ class PlayerActivity : AppCompatActivity() {
     private fun preparePlayer() {
         mediaPlayer.setDataSource(trackUrl)
         mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
+        mediaPlayer.setOnPreparedListener(param = {
             binding.resumeButton.isEnabled = true
             binding.resumeButton.isVisible = true
             binding.pauseButton.isVisible = false
-        }
-        mediaPlayer.setOnCompletionListener {
+        })
+        mediaPlayer.setOnCompletionListener(param = {
             binding.resumeButton.isVisible = true
             binding.pauseButton.isVisible = false
-            binding.trackTimePlayedTextView.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(0)
             handler.removeCallbacks(trackTimePlaying)
-        }
+        })
     }
 
     private fun startPlayer() {
@@ -122,7 +119,7 @@ class PlayerActivity : AppCompatActivity() {
             binding.trackTimePlayedTextView.text = SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
-            ).format(mediaPlayer.currentPosition.toLong())
+            ).format(mediaPlayer.currentPosition().toLong())
             handler.postDelayed(this, 500)
         }
     }

@@ -1,15 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.models
 
-import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Track(
     val trackName: String? = "",
     val artistName: String? = "",
-    val trackTimeMillis: Int = 0,
+    val trackTimeString: String? = "",
     val artworkUrl100: String? = "",
     val trackId: Int = 0,
     val collectionName: String? = "",
@@ -17,4 +15,4 @@ data class Track(
     val primaryGenreName: String? = "",
     val country: String? = "",
     val previewUrl: String? = "",
-): Parcelable
+) : Parcelable

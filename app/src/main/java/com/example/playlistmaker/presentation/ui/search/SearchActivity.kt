@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.search
 
-import SearchAdapter
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,14 +7,22 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.presentation.ui.player.PlayerActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.SEARCH_HISTORY_KEY
+import com.example.playlistmaker.data.SEARCH_HISTORY_PREFERENCES
+import com.example.playlistmaker.data.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.data.dto.TracksSearchResponse
+import com.example.playlistmaker.data.network.ITunesApi
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.TracksInteractor
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,33 +33,36 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
+
+    private val tracksInteractor = Creator.provideTracksInteractor()
+
+    private companion object {
+        const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val EMPTY = ""
+        const val NUMBER_OF_SONGS_IN_HISTORY = 10
+        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
+
     private var searchText: String = EMPTY
 
     private lateinit var binding: ActivitySearchBinding
 
-    private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .client(okHttpClient)
-        .baseUrl(ITUNES_BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
-
     private var tracks: MutableList<Track> = mutableListOf()
     private var tracksHistory: MutableList<Track> = mutableListOf()
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var searchHistory: SearchHistory
+    private val searchHistorySharedPreferences by lazy {
+        Creator.provideSearchHistoryInteractor(
+            applicationContext
+        )
+    }
 
     private val searchAdapter = SearchAdapter { track ->
         if (clickDebounce()) {
             handleTrackClick(track)
         }
     }
+
     private val searchHistoryAdapter = SearchHistoryAdapter { track ->
         if (clickDebounce()) {
             handleTrackClick(track)
@@ -60,17 +70,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { searchRequest() }
 
-    private companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val EMPTY = ""
-        const val ITUNES_BASE_URL = "https://itunes.apple.com"
-        const val NUMBER_OF_SONGS_IN_HISTORY = 10
-        const val CLICK_DEBOUNCE_DELAY = 1000L
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val searchRunnable = Runnable { searchRequest() }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -85,8 +88,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         loadSavedInstanceState(savedInstanceState)
-
-        loadSharedPreferences()
 
         setupReturnBackImageView()
 
@@ -118,11 +119,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSharedPreferences() {
-        sharedPreferences = getSharedPreferences(SEARCH_HISTORY_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
-    }
-
     private fun setupReturnBackImageView() {
         binding.returnBackImageView.setOnClickListener {
             finish()
@@ -147,7 +143,7 @@ class SearchActivity : AppCompatActivity() {
         if (tracksHistory.size > NUMBER_OF_SONGS_IN_HISTORY) {
             tracksHistory.removeAt(tracksHistory.size - 1)
         }
-        searchHistory.write(tracksHistory)
+        searchHistorySharedPreferences.write(tracksHistory)
         val playerIntent = Intent(this, PlayerActivity::class.java)
         playerIntent.putExtra(getString(R.string.track), track)
         startActivity(playerIntent)
@@ -156,7 +152,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupClearHistoryButton() {
         binding.clearHistoryButton.setOnClickListener {
             binding.searchHistory.isVisible = false
-            searchHistory.clear()
+            searchHistorySharedPreferences.clear()
             tracksHistory.clear()
         }
     }
@@ -209,7 +205,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupHistorySearchRecyclerView() {
-        tracksHistory = searchHistory.read().toMutableList()
+        tracksHistory = searchHistorySharedPreferences.read().toMutableList()
         searchHistoryAdapter.tracksHistory = tracksHistory
         binding.historySearchRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -240,54 +236,51 @@ class SearchActivity : AppCompatActivity() {
             binding.placeholderServerError.isVisible = false
             binding.tracksRecyclerView.isVisible = false
             binding.searchProgressBar.isVisible = true
-            iTunesService.getTracks(binding.inputEditText.text.toString())
-                .enqueue(object : Callback<TracksResponse> {
-                    override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
-                    ) {
-                        binding.searchProgressBar.isVisible = false
-                        when (response.code()) {
-                            200 -> {
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    tracks.clear()
-                                    binding.placeholderNoSearchResults.isVisible = false
-                                    binding.placeholderServerError.isVisible = false
-                                    tracks.addAll(response.body()?.results!!)
-                                    searchAdapter.notifyDataSetChanged()
-                                    binding.tracksRecyclerView.isVisible = true
-                                } else {
-                                    tracks.clear()
-                                    searchAdapter.notifyDataSetChanged()
-                                    binding.placeholderServerError.isVisible = false
-                                    binding.placeholderNoSearchResults.isVisible = true
-                                }
-                            }
 
-                            else -> {
+            tracksInteractor.searchTracks(
+                searchText,
+                object : TracksInteractor.TracksConsumer {
+                    override fun consume(foundTracks: List<Track>) {
+                        handler.post {
+                            binding.searchProgressBar.isVisible = false
+                            tracks.clear()
+                            binding.placeholderNoSearchResults.isVisible = false
+                            binding.placeholderServerError.isVisible = false
+                            tracks.addAll(foundTracks)
+                            binding.tracksRecyclerView.isVisible = true
+                            searchAdapter.notifyDataSetChanged()
+                            if (tracks.isEmpty()) {
                                 tracks.clear()
                                 searchAdapter.notifyDataSetChanged()
-                                binding.placeholderNoSearchResults.isVisible = false
-                                binding.placeholderServerError.isVisible = true
+                                binding.placeholderServerError.isVisible = false
+                                binding.placeholderNoSearchResults.isVisible = true
                             }
-                        }
-                    }
 
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                        t.printStackTrace()
-                        tracks.clear()
-                        searchAdapter.notifyDataSetChanged()
-                        binding.placeholderServerError.isVisible = true
-                        binding.searchProgressBar.isVisible = false
-                        binding.placeholderNoSearchResults.isVisible = false
-                        binding.refreshSearch.setOnClickListener {
-                            binding.placeholderServerError.isVisible = false
-                            searchRequest()
+                            //else {
+//                                tracks.clear()
+//                                searchAdapter.notifyDataSetChanged()
+//                                binding.placeholderNoSearchResults.isVisible = false
+//                                binding.placeholderServerError.isVisible = true
+//                            }
                         }
                     }
                 })
+
+//                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
+//                        t.printStackTrace()
+//                        tracks.clear()
+//                        searchAdapter.notifyDataSetChanged()
+//                        binding.placeholderServerError.isVisible = true
+//                        binding.searchProgressBar.isVisible = false
+//                        binding.placeholderNoSearchResults.isVisible = false
+//                        binding.refreshSearch.setOnClickListener {
+//                            binding.placeholderServerError.isVisible = false
+//                            searchRequest()
+//                        }
+//                    }
         }
     }
+
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
