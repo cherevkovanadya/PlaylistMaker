@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Track(
     val trackName: String? = "",
     val artistName: String? = "",
-    val trackTimeString: String,
+    val trackTimeString: String? = "",
     val artworkUrl100: String? = "",
     val trackId: Int = 0,
     val collectionName: String? = "",
@@ -15,4 +15,4 @@ data class Track(
     val primaryGenreName: String? = "",
     val country: String? = "",
     val previewUrl: String? = "",
-): Parcelable
+) : Parcelable

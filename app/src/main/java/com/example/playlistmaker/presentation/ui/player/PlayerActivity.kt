@@ -1,7 +1,6 @@
 package com.example.playlistmaker.presentation.ui.player
 
 import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,7 +21,6 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
     private val handler = Handler(Looper.getMainLooper())
-    //private var mediaPlayer = MediaPlayer()
     private val mediaPlayer = Creator.providePlayerInteractor()
     private var trackUrl: String? = EMPTY
 
@@ -52,7 +50,7 @@ class PlayerActivity : AppCompatActivity() {
                 .into(binding.trackCoverImageView)
             binding.trackNameTextView.text = track.trackName
             binding.artistNameTextView.text = track.artistName
-            binding.trackTimeValueTextView.text = track.trackTimeString
+            binding.trackTimeValueTextView.text = track.trackTimeString.toString()
             binding.collectionNameValueTextView.text = track.collectionName
             binding.releaseDateValueTextView.text = track.releaseDate
             binding.primaryGenreNameValueTextView.text = track.primaryGenreName
@@ -94,10 +92,6 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.setOnCompletionListener(param = {
             binding.resumeButton.isVisible = true
             binding.pauseButton.isVisible = false
-            binding.trackTimePlayedTextView.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(0)
             handler.removeCallbacks(trackTimePlaying)
         })
     }

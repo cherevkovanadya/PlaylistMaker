@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class SearchViewHolder(
     itemView: View
@@ -22,8 +20,7 @@ class SearchViewHolder(
     fun bind(track: Track) {
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        trackTimeTextView.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeString)
+        trackTimeTextView.text = track.trackTimeString
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.small_corner_radius)))

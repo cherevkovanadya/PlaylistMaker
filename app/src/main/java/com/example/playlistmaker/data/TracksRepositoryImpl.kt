@@ -13,9 +13,16 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
         if (response.resultCode == 200) {
             return (response as TracksSearchResponse).results.map {
                 Track(
-                    it.trackName, it.artistName, SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.trackTimeMillis),
-                    it.artworkUrl100, it.trackId, it.collectionName,
-                    it.releaseDate?.substring(0, 4), it.primaryGenreName, it.country, it.previewUrl
+                    it.trackName,
+                    it.artistName,
+                    SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.trackTimeMillis),
+                    it.artworkUrl100,
+                    it.trackId,
+                    it.collectionName,
+                    it.releaseDate?.substring(0, 4),
+                    it.primaryGenreName,
+                    it.country,
+                    it.previewUrl
                 )
             }
         } else {
