@@ -88,6 +88,8 @@ class SearchActivity : AppCompatActivity() {
         setupClearIconImageView()
 
         setupEditText()
+
+        setupClearHistoryButton()
     }
 
     override fun onDestroy() {
@@ -184,7 +186,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupClearHistoryButton() {
-        viewModel.clearSearchHistory()
+        binding.clearHistoryButton.setOnClickListener {
+            viewModel.clearSearchHistory()
+        }
     }
 
     private fun setupEditText() {
@@ -209,6 +213,7 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         }
         binding.inputEditText.addTextChangedListener(textWatcher)
+        setupTracksRecyclerView()
     }
 
     private fun handleSearchTextChanged(s: CharSequence?) {
@@ -217,7 +222,6 @@ class SearchActivity : AppCompatActivity() {
             binding.tracksRecyclerView.isVisible = false
             binding.placeholderNoSearchResults.isVisible = false
             binding.placeholderServerError.isVisible = false
-            setupClearHistoryButton()
         } else {
             searchAdapter.tracks.clear()
             searchAdapter.notifyDataSetChanged()
@@ -225,7 +229,6 @@ class SearchActivity : AppCompatActivity() {
             binding.placeholderServerError.isVisible = false
             binding.tracksRecyclerView.isVisible = true
             binding.searchHistory.isVisible = false
-            setupTracksRecyclerView()
         }
     }
 

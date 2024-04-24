@@ -23,7 +23,7 @@ class SharingInteractorImpl(
     }
 
     private fun getShareAppLink(): String {
-        return context.getString(R.string.share_application)
+        return context.getString(R.string.practicum_android_developer)
     }
 
     private fun getSupportEmailData(): EmailData {
