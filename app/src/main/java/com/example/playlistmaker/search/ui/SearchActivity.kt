@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -115,10 +116,9 @@ class SearchActivity : AppCompatActivity() {
     private fun renderSearchHistoryState(state: SearchHistoryState) {
         when (state) {
             is SearchHistoryState.Content -> {
-                if (state.tracks.isNotEmpty()) {
                     binding.searchHistory.isVisible = true
                     setupHistorySearchRecyclerView(state.tracks)
-                }
+
             }
 
             is SearchHistoryState.Empty -> {
@@ -256,10 +256,6 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    private fun createJsonFromTracksList(tracksHistory: MutableList<Track>): String {
-        return Gson().toJson(tracksHistory)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {

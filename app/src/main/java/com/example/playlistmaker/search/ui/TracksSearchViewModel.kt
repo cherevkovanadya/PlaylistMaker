@@ -83,7 +83,7 @@ class TracksSearchViewModel(application: Application) : AndroidViewModel(applica
 
             tracksInteractor.searchTracks(newSearchText, object : TracksInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorType: Int?) {
-                    tracks = mutableListOf()
+                    tracks.clear()
                     if (foundTracks != null) {
                         tracks.addAll(foundTracks)
                     }
@@ -127,7 +127,11 @@ class TracksSearchViewModel(application: Application) : AndroidViewModel(applica
 
     fun showSearchHistory() {
         tracksHistory = searchHistorySharedPreferences.read().toMutableList()
-        stateSearchHistoryLiveData.postValue(SearchHistoryState.Content(tracksHistory))
+        if (tracksHistory.isNotEmpty()){
+            stateSearchHistoryLiveData.postValue(SearchHistoryState.Content(tracksHistory))
+        } else {
+            clearSearchHistory()
+        }
     }
 
     fun clearSearchHistory() {

@@ -34,7 +34,7 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                             it.artworkUrl100,
                             it.trackId,
                             it.collectionName,
-                            it.releaseDate?.substring(0, 4),
+                            it.releaseDate?.take(4),
                             it.primaryGenreName,
                             it.country,
                             it.previewUrl
