@@ -75,7 +75,7 @@ class SearchActivity : AppCompatActivity() {
             renderTracksState(it)
         }
 
-        viewModel.getStateSearchHistoryLiveData().observe(this){
+        viewModel.getStateSearchHistoryLiveData().observe(this) {
             renderSearchHistoryState(it)
         }
 
@@ -115,9 +115,12 @@ class SearchActivity : AppCompatActivity() {
     private fun renderSearchHistoryState(state: SearchHistoryState) {
         when (state) {
             is SearchHistoryState.Content -> {
-                binding.searchHistory.isVisible = true
-                setupHistorySearchRecyclerView(state.tracks)
+                if (state.tracks.isNotEmpty()) {
+                    binding.searchHistory.isVisible = true
+                    setupHistorySearchRecyclerView(state.tracks)
+                }
             }
+
             is SearchHistoryState.Empty -> {
                 binding.searchHistory.isVisible = false
                 setupHistorySearchRecyclerView(state.tracks)
