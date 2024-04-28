@@ -10,7 +10,7 @@
     <string name="terms_of_use">Пользовательское соглашение</string>
     <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="email_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-    <string name="email">cherevkovanadezhda@yandex.ru</string>
+    <string name="email_data">cherevkovanadezhda@yandex.ru</string>
     <string name="yandex_terms_of_use">https://yandex.ru/legal/practicum_offer/</string>
     <string name="practicum_android_developer">https://practicum.yandex.ru/android-developer/</string>
     <string name="no_search_results">Ничего не нашлось</string>
