@@ -11,21 +11,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
-
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-
-    private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .client(okHttpClient)
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
+class RetrofitNetworkClient(
+    private val iTunesService: ITunesApi,
+    private val okHttpClient: OkHttpClient,
+    private val context: Context
+) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (!isConnected()) {
@@ -38,7 +28,9 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
         val response = iTunesService.searchTracks(dto.expression).execute()
         val body = response.body()
 
-        return body?.apply { resultCode = response.code() } ?: Response().apply { resultCode = response.code() }
+        return body?.apply { resultCode = response.code() } ?: Response().apply {
+            resultCode = response.code()
+        }
     }
 
     private fun isConnected(): Boolean {
