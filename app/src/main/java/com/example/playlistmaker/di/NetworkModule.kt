@@ -20,7 +20,6 @@ val networkModule = module {
 
     single<ITunesApi> {
         Retrofit.Builder()
-            .client(get())
             .baseUrl("https://itunes.apple.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()

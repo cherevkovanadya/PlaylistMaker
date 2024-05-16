@@ -6,22 +6,18 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.SEARCH_HISTORY_KEY
-import com.example.playlistmaker.search.data.SEARCH_HISTORY_PREFERENCES
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.ui.states.SearchHistoryState
 import com.example.playlistmaker.search.ui.states.TracksState
-import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -40,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var viewModel: TracksSearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
 
     private val searchAdapter = SearchAdapter { track ->
         if (clickDebounce()) {
@@ -66,11 +62,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(
-            this,
-            TracksSearchViewModel.getViewModelFactory()
-        )[TracksSearchViewModel::class.java]
 
         viewModel.getStateTracksLiveData().observe(this) {
             renderTracksState(it)

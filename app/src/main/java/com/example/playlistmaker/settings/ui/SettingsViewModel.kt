@@ -16,18 +16,6 @@ class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
-    companion object {
-        fun getViewModelFactory(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val settingsInteractor = Creator.provideSettingsInteractor(context)
-                val sharingInteractor = Creator.provideSharingInteractor(context)
-                SettingsViewModel(
-                    sharingInteractor,
-                    settingsInteractor,
-                )
-            }
-        }
-    }
 
     private var stateThemeLiveData = MutableLiveData<Boolean>()
 
