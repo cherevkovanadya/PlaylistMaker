@@ -8,7 +8,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
@@ -30,7 +29,6 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
-    private val mediaPlayer = Creator.providePlayerInteractor()
     private var trackUrl: String? = EMPTY
 
     private val formatTimeTrack: SimpleDateFormat by lazy {
@@ -118,8 +116,4 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.release()
-    }
 }
