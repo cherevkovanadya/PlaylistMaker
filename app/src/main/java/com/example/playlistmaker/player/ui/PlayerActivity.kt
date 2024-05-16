@@ -4,7 +4,8 @@ import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.util.Creator
@@ -21,7 +22,11 @@ class PlayerActivity : AppCompatActivity() {
         const val GET_STRING = "track"
     }
 
-    private lateinit var viewModel: PlayerViewModel
+    private lateinit var track: Track
+
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(track)
+    }
 
     private lateinit var binding: ActivityPlayerBinding
 
@@ -46,33 +51,26 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        @Suppress("DEPRECATION") val track = intent.getParcelableExtra<Track>(GET_STRING)
-        if (track != null) {
-            Glide.with(binding.trackCoverImageView.context)
-                .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
-                .transform(
-                    RoundedCorners(
-                        binding.trackCoverImageView.resources.getDimensionPixelSize(
-                            R.dimen.corner_radius
-                        )
+        track = intent.getParcelableExtra(GET_STRING)!!
+        Glide.with(binding.trackCoverImageView.context)
+            .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
+            .transform(
+                RoundedCorners(
+                    binding.trackCoverImageView.resources.getDimensionPixelSize(
+                        R.dimen.corner_radius
                     )
                 )
-                .placeholder(R.drawable.large_placeholder)
-                .into(binding.trackCoverImageView)
-            binding.trackNameTextView.text = track.trackName
-            binding.artistNameTextView.text = track.artistName
-            binding.trackTimeValueTextView.text = track.trackTimeString.toString()
-            binding.collectionNameValueTextView.text = track.collectionName
-            binding.releaseDateValueTextView.text = track.releaseDate
-            binding.primaryGenreNameValueTextView.text = track.primaryGenreName
-            binding.countryValueTextView.text = track.country
-            trackUrl = track.previewUrl
-        }
-
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(track!!)
-        )[PlayerViewModel::class.java]
+            )
+            .placeholder(R.drawable.large_placeholder)
+            .into(binding.trackCoverImageView)
+        binding.trackNameTextView.text = track.trackName
+        binding.artistNameTextView.text = track.artistName
+        binding.trackTimeValueTextView.text = track.trackTimeString.toString()
+        binding.collectionNameValueTextView.text = track.collectionName
+        binding.releaseDateValueTextView.text = track.releaseDate
+        binding.primaryGenreNameValueTextView.text = track.primaryGenreName
+        binding.countryValueTextView.text = track.country
+        trackUrl = track.previewUrl
 
         binding.resumeButton.setOnClickListener {
             viewModel.startPlayer()
