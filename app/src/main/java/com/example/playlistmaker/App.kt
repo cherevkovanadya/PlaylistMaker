@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.di.interactorModule
+import com.example.playlistmaker.di.navigatorModule
 import com.example.playlistmaker.di.networkModule
 import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.util.Creator
@@ -20,7 +21,8 @@ class App : Application() {
             modules(
                 networkModule,
                 repositoryModule,
-                interactorModule
+                interactorModule,
+                navigatorModule
             )
         }
 
